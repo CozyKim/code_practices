@@ -1,1 +1,1 @@
-# code_practices
+commit 형식 : YYMMDD
