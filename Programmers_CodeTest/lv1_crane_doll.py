@@ -9,7 +9,7 @@ def solution(board, moves):
         if tmp == 0:
             empty.append(m)
         elif last_doll[-1] == tmp:
-            answer += 1
+            answer += 2
             last_doll.pop()
         else:
             last_doll.append(tmp)
