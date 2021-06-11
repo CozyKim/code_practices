@@ -6,7 +6,7 @@ def solution(progresses, speeds):
     # que = []
     cnt = 1
     remain_days = [ceil((100 - i) / j) for i, j in zip(progresses, speeds)]
-    print(f'remain_days : {remain_days}')
+    # print(f'remain_days : {remain_days}')
     while remain_days:
         tmp = remain_days.pop(0)
         _remain_days = remain_days[:]
@@ -20,7 +20,7 @@ def solution(progresses, speeds):
         cnt = 1
         remain_days = _remain_days[:]
 
-    print(answer)
+    # print(answer)
     return answer
 
 
