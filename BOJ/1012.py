@@ -18,8 +18,8 @@
 # """
 # """
 # input
-# 입력의 첫 줄에는 테스트 케이스의 개수 T가 주어진다. 
-# 그 다음 줄부터 각각의 테스트 케이스에 대해 첫째 줄에는 배추를 심은 배추밭의 가로길이 M(1 ≤ M ≤ 50)과 
+# 입력의 첫 줄에는 테스트 케이스의 개수 T가 주어진다.
+# 그 다음 줄부터 각각의 테스트 케이스에 대해 첫째 줄에는 배추를 심은 배추밭의 가로길이 M(1 ≤ M ≤ 50)과
 # 세로길이 N(1 ≤ N ≤ 50), 그리고 배추가 심어져 있는 위치의 개수 K(1 ≤ K ≤ 2500)이 주어진다.
 # 그 다음 K줄에는 배추의 위치 X(0 ≤ X ≤ M-1), Y(0 ≤ Y ≤ N-1)가 주어진다.
 
@@ -28,173 +28,46 @@
 # """
 
 
+import sys
+from collections import deque
 
 
-# import sys
-# def CreateArea(M, N):
-#     area = []
-#     for i in range(M):
-#         area.append([False] * N)
-#     return area
+def check(positions: list):
+    cnt = 0
+    positions.sort()
+    # print(positions)
+
+    while positions:
+        visited = []
+        stack = [positions.pop()]
+        cnt += 1
+
+        while stack:
+            n = stack.pop()
+            if n not in visited:
+                visited.append(n)
+
+                if [n[0]+1, n[1]] in positions:
+                    stack.append([n[0]+1, n[1]])
+                    positions.remove([n[0]+1, n[1]])
+                if [n[0], n[1]+1] in positions:
+                    stack.append([n[0], n[1]+1])
+                    positions.remove([n[0], n[1]+1])
+                if [n[0], n[1]-1] in positions:
+                    stack.append([n[0], n[1]-1])
+                    positions.remove([n[0], n[1]-1])
+                if [n[0]-1, n[1]] in positions:
+                    stack.append([n[0]-1, n[1]])
+                    positions.remove([n[0]-1, n[1]])
+
+    return cnt
 
 
-# # def CheckWorm(Area):
-# #     cnt = 0
-# #     flag = False
-# #     pre_flag = False
-# #     exce_pre_flag = False
-# #     for y in range(len(Area[0])):
-# #         for x in range(len(Area)):
-# #             if y == 0:  # 첫줄
-# #                 if x == len(Area) - 1:  # 행
-# #                     if Area[x][y]:
-# #                         cnt += 1
-# #                     else:
-# #                         if flag:
-# #                             cnt += 1
-# #                     flag = False
-# #                 else:
-# #                     if Area[x][y]:
-# #                         flag = True
-# #                     else:
-# #                         if flag:
-# #                             cnt += 1
-# #                             flag = False
-
-# #             else:
-# #                 if x == len(Area) - 1:
-# #                     if Area[x][y]:
-# #                         if Area[x][y-1]:
-# #                             if exce_pre_flag:
-# #                                 cnt -= 1
-# #                         elif pre_flag:
-# #                             pass
-# #                         else:
-# #                             cnt += 1
-# #                     else:
-# #                         if flag and not pre_flag:
-# #                             cnt += 1
-# #                     flag = False
-# #                     pre_flag = False
-# #                     exce_pre_flag = False
-# #                 else:
-# #                     if Area[x][y]:
-# #                         flag = True
-# #                         if Area[x][y-1]:
-# #                             pre_flag = True
-# #                             if exce_pre_flag:
-# #                                 cnt -= 1
-# #                                 exce_pre_flag = False
-# #                         elif pre_flag:
-# #                             exce_pre_flag = True
-
-# #                     else:
-# #                         if flag and not pre_flag:
-# #                             cnt += 1
-# #                         flag = False
-# #                         pre_flag = False
-# #     return cnt
-
-# # def CheckWorm(Area):
-# #     cnt = 0
-# #     flag = False
-# #     pre_flag = False
-# #     for y in range(len(Area[0])):
-# #         for x in range(len(Area)):
-# #             if y ==0:
-# #                 if x == 0:
-# #                     if Area[x][y]:
-# #                         cnt += 1
-# #                 else:
-# #                     if Area[x][y]:
-# #                         if not Area[x-1][y]:
-# #                             cnt += 1
-
-# #             else:
-# #                 if x == 0:
-# #                     if Area[x][y]:
-# #                         if not Area[x][y-1]:
-# #                             cnt += 1
-
-# #                 else:
-# #                     if Area[x][y]:
-# #                         if not Area[x-1][y] and not Area[x][y-1]:
-# #                             cnt += 1
-
-# # def CheckWorm(Area):
-# #     cnt = 0
-# #     for x in range(len(Area)):
-# #         for y in range(len(Area[0])):
-# #             if y == 0 or y == len(Area[0]) - 1:
-# #                 if y == 0:
-# #                     if x == 0:
-# #                         if Area[x][y]:
-# #                             if Area[x+1][y] or Area[x][y+1]:
-# #                                 pass
-# #                             else:
-# #                                 cnt += 1
-# #                     elif x == len(Area)-1:
-# #                         if Area[x][y]:
-# #                             if Area[x-1][y] or Area[x][y+1]:
-# #                                 pass
-# #                             else:
-# #                                 cnt += 1
-# #                     else:
-# #                         if Area[x][y]:
-# #                             if Area[x-1][y] or Area[x+1][y] or Area[x][y+1]:
-# #                                 pass
-# #                             else:
-# #                                 cnt += 1
-# #                 else:   # y == len(Area[0]) -1
-# #                     if x == 0:
-# #                         if Area[x][y]:
-# #                             if Area[x][y-1] or Area[x+1][y]:
-# #                                 pass
-# #                             else:
-# #                                 cnt += 1
-# #                     elif x == len(Area)-1:
-# #                         if Area[x][y]:
-# #                             if Area[x-1][y] or Area[x][y-1]:
-# #                                 pass
-# #                             else:
-# #                                 cnt += 1
-# #                     else:
-# #                         if Area[x][y]:
-# #                             if Area[x-1][y] or Area[x][y-1] or Area[x+1][y]:
-# #                                 pass
-# #                             else:
-# #                                 cnt += 1
-# #             else:
-# #                 if x == 0:
-# #                     if Area[x][y]:
-# #                         if Area[x][y-1] or Area[x+1][y] or Area[x][y+1]:
-# #                             pass
-# #                         else:
-# #                             cnt += 1
-# #                 elif x == len(Area)-1:
-# #                     if Area[x][y]:
-# #                         if Area[x-1][y] or Area[x][y-1] or Area[x][y+1]:
-# #                             pass
-# #                         else:
-# #                             cnt += 1
-# #                 else:
-# #                     if Area[x][y]:
-# #                         if Area[x-1][y] or Area[x][y-1] or Area[x+1][y] or Area[x][y+1]:
-# #                             pass
-# #                         else:
-# #                             cnt += 1
-# #     return cnt
-
-# def CheckWorm(Area, Place):
-    
-
-# T = int(sys.stdin.readline())
-# place =[]
-# for _ in range(T):
-#     M, N, K = map(int, sys.stdin.readline().split())
-#     area = CreateArea(M, N)
-#     for _ in range(K):
-#         X, Y = map(int, sys.stdin.readline().split())
-#         area[X][Y] = True
-#         place.append([X, Y])
-#     print(CheckWorm(area))
+T = int(input())
+for _ in range(T):
+    M, N, K = map(int, input().split())
+    positions = []
+    for _ in range(K):
+        positions.append(list(map(int, sys.stdin.readline().split())))
+    # print(positions)
+    print(check(positions))
