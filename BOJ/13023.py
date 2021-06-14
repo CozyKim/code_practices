@@ -1,38 +1,32 @@
 # https://www.acmicpc.net/problem/13023
-import sys
-input = sys.stdin.readline
-N, M = map(int, input().split())
-graph = {}
-tmp = []
-for _ in range(M):
-    _a, _b = map(int, input().split())
-    tmp.append(_a)
-    tmp.append(_b)
-    for a, b in [[_a, _b], [_b, _a]]:
-        if a in graph:
-            graph[a].append(b)
-        else:
-            graph[a] = [b]
+n, m = map(int, input().split())
+adj_lst = [[] for i in range(n)]
 
-_start = [[i, tmp.count(i)] for i in tmp]
-start = [i for i, v in _start if v == min(_start, key=lambda x:x[1])[1]]
-answer = 0
+for i in range(m):
+    a, b = map(int, input().split())
+    adj_lst[a].append(b)
+    adj_lst[b].append(a)
 
-tmp = []
-visited = []
-stack = [start[0]]
-cnt = 1
-while stack:
-    n = stack.pop()
-    if cnt == 5:
-        answer = 1
+visited = [False for i in range(n)]
+
+
+def dfs(v, depth):
+    global ans
+    visited[v] = True
+    if depth == 4:
+        ans = True
+        return
+    for nxt in adj_lst[v]:
+        if not visited[nxt]:
+            dfs(nxt, depth+1)
+            visited[nxt] = False
+
+
+ans = False
+# 돌아가면서 dfs의 시작점 설정
+for i in range(n):
+    dfs(i, 0)
+    visited[i] = False
+    if ans:
         break
-    if n not in visited:
-        visited.append(n)
-        stack += set(graph[n]) - set(visited)
-
-        cnt += 1
-# print(visited)
-# if max(tmp) == N:
-#     answer = 1
-print(answer)
+print(1 if ans else 0)
