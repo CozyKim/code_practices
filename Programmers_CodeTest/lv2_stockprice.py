@@ -14,7 +14,6 @@ def solution(prices):
         for i in _price:
             if i >= n:
                 cnt += 1
-                flag = 1
             else:
                 cnt += 1
                 break
