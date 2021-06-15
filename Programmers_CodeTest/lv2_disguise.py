@@ -1,3 +1,4 @@
+# https://programmers.co.kr/learn/courses/30/lessons/42578
 from itertools import combinations as com
 from functools import reduce
 
