@@ -54,7 +54,7 @@ else:
 
 
 # 2
-# matrix
+# matrix -> 성공
 
 
 input = sys.stdin.readline
