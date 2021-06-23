@@ -1,52 +1,29 @@
 
 # https://programmers.co.kr/learn/courses/30/lessons/68645
 
-
-from collections import deque
-
-
 def solution(n):
     answer = []
-    case = deque([[i]+[0]*(i-1) for i in range(1, n+1)])
+    case = [[None]*i for i in range(1, n+1)]
     print(case)
-    answer.append(case.popleft())
-    up = 1
-    num = n+1
-    while case:
-        if up:
-            for layer in range(len(case)-1, -1, -1):
-                if layer == len(case) - 1:
-                    for idx, i in enumerate(case[layer]):
-                        if i == 0:
-                            case[layer][idx] = num
-                            num += 1
-                else:
-                    for i in range(len(case[layer])-1, -1, -1):
-                        if case[layer][i] == 0:
-                            case[layer][i] = num
-                            num += 1
-                            break
+    # 움직임은 아래 -> 오른쪽 -> 위(대각선위) 를 반복
+    x, y = -1, 0
+    num = 1
+    for direct in range(n):
+        for i in range(direct, n):
+            if direct % 3 == 0:
+                x += 1
+            elif direct % 3 == 1:
+                y += 1
+            elif direct % 3 == 2:
+                x -= 1
+                y -= 1
+            case[x][y] = num
+            num += 1
 
-            answer.append(case.popleft())
-            if case:
-                answer.append(case.pop())
-            up = 0
-
-        else:
-            for layer in range(len(case)):
-                for i in range(1, len(case[layer])):
-                    if case[layer][i] == 0:
-                        case[layer][i] = num
-                        num += 1
-                        break
-            up = 1
-            answer.append(case.popleft())
-    answer.sort()
-    A = []
-    for i in answer:
-        A += i
-    print(A)
-    return A
+    for i in case:
+        answer += i
+    print(answer)
+    return answer
 
 
-solution(1000)
+solution(4)
