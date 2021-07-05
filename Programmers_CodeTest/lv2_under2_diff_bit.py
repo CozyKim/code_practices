@@ -9,6 +9,7 @@ def solution(numbers):
                 answer.append(num + 1)
             else:
                 answer.append(num + 2 ** (n - 1))
+
         else:
             answer.append(num + 2 ** (len(bin_num) - 1))
     return answer
