@@ -1,11 +1,9 @@
 # https://www.acmicpc.net/problem/1759
 from itertools import combinations
-from collections import Counter
 
 
 L, C = map(int, input().split())
 chars = list(input().split())
-# exception_list = list(combinations(chars, L))
 chars.sort()
 exception_list = list(map(''.join, list(combinations(chars, L))))
 exception_list.sort()
