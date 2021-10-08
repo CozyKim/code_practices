@@ -47,6 +47,7 @@ def bfs(a, b, visited=[[]], sum=0):
 def solution():
     A, B, C = map(int, input().split())
     sum_nums = sum([A, B, C])
+    # 모든 돌을 한 곳에 모은 경우가 최대
     visited = [[False] * sum_nums for _ in range(sum_nums)]
     if edge_case(A, B, C):
         return print(0)
@@ -57,6 +58,8 @@ def solution():
 
 
 solution()
+
+
 # while q:
 #     a, b, c = q.popleft()
 #     tmp = []
