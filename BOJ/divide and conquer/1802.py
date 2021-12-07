@@ -9,6 +9,9 @@
     input : 1(OUT), 0(IN)
     output : 차례대로 동호의 규칙을 적용해서 접을 수 있는가?
 
+풀이 메인 아이디어 :
+    한번 접을 때 마다 이존에 있던 것들 사이에 양쪽으로 서로 방향이 반대인 것들이 생긴다
+    예시) 1 -> 011 -> 1001100
 """
 import sys
 
@@ -18,13 +21,15 @@ input = sys.stdin.readline
 def dongho_rule(nums: str):
 
     if len(nums) < 3:
+        # 한번 만 접었을 때
         return True
 
     next_nums = ""
     for i in range(2, len(nums), 2):
+        # 0부터 2의 배수 만큼 서로 비교하여 방향이 반대가 아니면 동호의 규칙이 적용이 안된다
         if nums[i - 2] == nums[i]:
             return False
-        next_nums += nums[i - 1]
+        next_nums += nums[i - 1]  # 가장 마지막에 접었던 것을 안 접었다 생각하기
     next_nums += nums[len(nums) - 1]
 
     if dongho_rule(next_nums):
