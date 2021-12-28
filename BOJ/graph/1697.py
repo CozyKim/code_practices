@@ -27,24 +27,17 @@ def bfs():
     while q:
         pos, cnt = q.popleft()
 
-        next1, next2, next3 = pos + 1, pos - 1, pos * 2
+        nexts = [pos + 1, pos - 1, pos * 2]
 
-        if next1 == K or next2 == K or next3 == K:
+        if K in nexts:
             return cnt + 1
 
         # 다음 위치가 visited 범위를 넘어서선 안된다.
-        if 0 <= next1 <= len(visited) - 1:
-            if not visited[next1]:
-                visited[next1] = 1
-                q.append((next1, cnt + 1))
-        if 0 <= next2 <= len(visited) - 1:
-            if not visited[next2]:
-                visited[next2] = 1
-                q.append((next2, cnt + 1))
-        if 0 <= next3 <= len(visited) - 1:
-            if not visited[next3]:
-                visited[next3] = 1
-                q.append((next3, cnt + 1))
+        for n in nexts:
+            if 0 <= n <= len(visited) - 1:
+                if not visited[n]:
+                    visited[n] = 1
+                    q.append((n, cnt + 1))
 
 
 print(bfs())
