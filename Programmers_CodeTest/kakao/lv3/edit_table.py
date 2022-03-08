@@ -25,42 +25,76 @@
     OX : 모든 명령어를 수행한 후 표의 상태를 비교하여 삭제되지 않은 행은 O, 삭제된 행은 X
 """
 
+# 삭제 pop, 되돌리기 insert -> 전에 풀이 : 실패
 
+# 연결리스트 처럼 구현
 def solution(n, k, cmd):
     answer = ["O" for _ in range(n)]
 
-    # 현재 위치를 나타내는 변수 now
-    now = k
+    # 초기화
+    table = [[i - 1, i, i + 1] for i in range(n)]
+    table[n - 1][2] = "-1"
+    table[0][0] = "-1"
 
-    # 사용 했던 로그를 담는 stack 이 필요(클리어 할 때마다 위치 저장)
     stack = []
 
-    for c in cmd:
-        CMD = c.split()[0]
-        if CMD == "U":
-            now -= int(c.split()[1])
+    for CMD in cmd:
+        if CMD[0] == "U":
+            for _ in range(int(CMD[2:])):
+                k = table[k][0]
+        elif CMD[0] == "D":
+            for _ in range(int(CMD[2:])):
+                k = table[k][2]
+        elif CMD[0] == "C":
+            stack.append(table[k])
+            if table[k][2] == "-1":
+                k = table[k][0]
+                table[k][2] = "-1"
 
-        elif CMD == "D":
-            now += int(c.split()[1])
+            elif table[k][0] == "-1":
+                k = table[k][2]
+                table[k][0] = "-1"
 
-        elif CMD == "C":
-            stack.append(now)
-            answer.pop()
-            if now == len(answer):
-                now -= 1
-        elif CMD == "Z":
-            prev = stack.pop()
-            answer.append("O")
-            if prev <= now:
-                now += 1
+            else:
+                table[table[k][0]][2] = table[k][2]
+                table[table[k][2]][0] = table[k][0]
+                k = table[k][2]
+        elif CMD[0] == "Z":
+            last_del = stack.pop()
+            if last_del[2] == "-1":
+                table[last_del[0]][2] = last_del[1]
+            elif last_del[0] == "-1":
+                table[last_del[2]][0] = last_del[1]
+            else:
+                table[last_del[0]][2] = last_del[1]
+                table[last_del[2]][0] = last_del[1]
 
-    while stack:
-        prev = stack.pop()
-        answer.insert(prev, "X")
-
-    answer = "".join(answer)
-
-    return answer
+    for _, i, _ in stack:
+        answer[i] = "X"
+    print(table)
+    print(stack)
+    return "".join(answer)
 
 
-print(solution(8, 2, ["D 2", "C", "U 3", "C", "D 4", "C", "U 2", "Z", "Z", "U 1", "C"]))
+print(
+    solution(
+        8,
+        0,
+        [
+            "C",
+            "C",
+            "C",
+            "C",
+            "C",
+            "C",
+            "C",
+            "Z",
+            "Z",
+            "Z",
+            "Z",
+            "Z",
+            "Z",
+            "Z",
+        ],
+    )
+)
