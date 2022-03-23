@@ -34,7 +34,6 @@ def solution(n, results):
         dfs(i, True)
         dfs(i, False)
         if len(wins) + len(loses) - 2 == n - 1:
-            print(i)
             answer += 1
         wins = set()
         loses = set()
