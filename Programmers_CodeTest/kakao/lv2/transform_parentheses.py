@@ -23,66 +23,42 @@
 
 p = "()))((()"
 
-from collections import Counter, defaultdict
+
+def balance_string(string):
+    left_cnt, right_cnt = 0, 0
+    for i in range(len(string)):
+
+        if string[i] == "(":
+            left_cnt += 1
+        else:
+            right_cnt += 1
+        if left_cnt and left_cnt == right_cnt:
+            return string[: i + 1], string[i + 1 :]
+
+
+def right_string(string):
+    cnt = 0
+    for i in range(len(string)):
+        if string[i] == "(":
+            cnt += 1
+        else:
+            cnt -= 1
+        if cnt < 0:
+            return False
+    return True
 
 
 def solution(p):
-    answer = ""
-
-    # 균형잡힌 문자열 체크
-    def balanced_check(str):
-        cnts = Counter(str)
-        if cnts["("] == cnts[")"]:
-            return True
-        return False
-
-    # 올바른 문자열 체크
-    def right_check(str):
-        if not balanced_check(str):
-            return False
-
-        buckect = defaultdict(int)
-        for s in str:
-            if s == "(":
-                buckect[s] += 1
-            elif s == ")":
-                if buckect["("] < buckect[")"] + 1:
-                    return False
-                buckect[s] += 1
-        return True
-
-    def inv_str(str):
-        inv_dict = {"(": ")", ")": "("}
-        result = ""
-        for s in str:
-            result += inv_dict[s]
-        return result
-
-    def func1(str: str):
-        if not len(str):
-            return ""
-
-    def func2(str: str):
-        for i in range(2, len(str) + 2, 2):
-            u, w = str[:i], str[i:]
-            if balanced_check(u) and balanced_check(w):
-                return u, w
-
-    def dfs(u):
-        if func1(u) == "":
-            return ""
-        nw_u, nw_w = func2(u)
-
-        if right_check(nw_u):
-            return nw_u + dfs(nw_w)
-            # return u + nw_u, w
-        else:
-            nw_w = dfs(nw_w)
-            return "(" + nw_w + ")" + inv_str(nw_u[1:-1])
-
-    answer = dfs(p)
-    print(answer)
-    return answer
+    if not p:
+        return p
+    mapping = {"(": ")", ")": "("}
+    u, v = balance_string(p)
+    if right_string(u):
+        return u + solution(v)
+    else:
+        tmp = "("
+        tmp += solution(v) + ")"
+        return tmp + "".join([mapping[i] for i in u[1:-1]])
 
 
 solution(p)
