@@ -1,38 +1,36 @@
 # https://programmers.co.kr/learn/courses/30/lessons/64064
 
 
+import re
+
+
 def solution(user_id, banned_id):
-    answer = {}
+    candidate = [[] for _ in range(len(banned_id))]
+    for i, ban_id in enumerate(banned_id):
+        ban_id = ban_id.replace("*", "[\w]")
+        for j, user in enumerate(user_id):
+            if re.match(ban_id + "$", user):
+                candidate[i].append(j)
+    visited = [0] * len(user_id)
 
-    def check(user_idx, check_id):
-        candid = []
-        for idx in user_idx:
-            if len(user_id[idx]) == len(check_id):
-                for u, b in zip(user_id[idx], check_id):
-                    if b == "*":
-                        continue
-                    if u != b:
-                        break
-                else:
-                    candid.append(idx)
-        return candid
-
-    def dfs(u_idxs: list, b_idx: int):
+    def dfs(idx, visited):
         nonlocal answer
-        if b_idx == len(banned_id):
-            cand = tuple(sorted(set(user_index) - set(u_idxs)))
-            if cand in answer:
-                return
-            answer[cand] = 1
+        if idx == len(candidate):
+            answer.add(tuple([i + 1 for i in range(len(visited)) if visited[i]]))
             return
 
-        for c in check(u_idxs, banned_id[b_idx]):
-            dfs(list(set(u_idxs) - set([c])), b_idx + 1)
+        for i in candidate[idx]:
+            if not visited[i]:
+                visited[i] = 1
+                dfs(idx + 1, visited)
+                visited[i] = 0
 
-    user_index = [i for i in range(len(user_id))]
-    dfs(user_index, 0)
-
-    return answer
+    answer = set()
+    for i in candidate[0]:
+        visited[i] = 1
+        dfs(1, visited)
+        visited[i] = 0
+    return len(answer)
 
 
 print(
