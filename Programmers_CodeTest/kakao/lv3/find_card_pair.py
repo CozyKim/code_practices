@@ -1,75 +1,75 @@
 # https://programmers.co.kr/learn/courses/30/lessons/72415
-
-from collections import defaultdict, deque
-from copy import deepcopy
+from collections import deque
 from itertools import permutations
 
 
 def solution(board, r, c):
     answer = float("inf")
 
-    card_pos = defaultdict(list)
-    for i in range(4):
-        for j in range(4):
-            if board[i][j] != 0:
-                card_pos[board[i][j]].append((i, j))
+    def move_shift(r, c, dr, dc, board):
+        r, c, = (
+            r + dr,
+            c + dc,
+        )
+        while 0 <= r < 4 and 0 <= c < 4:
+            if board[r][c]:
+                return r, c
+            r, c, = (
+                r + dr,
+                c + dc,
+            )
+        return r - dr, c - dc
 
-    def move_ctrl(x, y, dx, dy, board):
-        x += dx
-        y += dy
-        while 0 <= x < 4 and 0 <= y < 4:
-            if board[x][y] != 0:
-                return x, y
-            x += dx
-            y += dy
-        return x - dx, y - dy
-
-    def bfs(cur_pos, first_card_pos, color, BOARD, check_first_card_distance=False):
+    def find_card(r, c, card, board):
         visited = [[0] * 4 for _ in range(4)]
-        q = deque([(cur_pos, 0)])
+        q = deque([(r, c, 0)])
         while q:
-            (x, y), cnt = q.popleft()
+            x, y, cnt = q.popleft()
             if visited[x][y]:
                 continue
-            if check_first_card_distance:
-                if (x, y) == first_card_pos:
-                    return x, y, cnt + 1, BOARD
-            else:
-                if BOARD[x][y] == color and (x, y) != first_card_pos:
-                    BOARD[x][y] = BOARD[first_card_pos[0]][first_card_pos[1]] = 0
-                    return x, y, cnt + 1, BOARD
             visited[x][y] = 1
+            if board[x][y] == card:
+                cnt += 1
+                board[x][y] = 0
+                return x, y, cnt, board
             for dx, dy in [(0, 1), (0, -1), (1, 0), (-1, 0)]:
                 nx, ny = x + dx, y + dy
-                c_nx, c_ny = move_ctrl(x, y, dx, dy, BOARD)
+                sx, sy = move_shift(x, y, dx, dy, board)
+                if not visited[sx][sy]:
+                    q.append((sx, sy, cnt + 1))
+                if 0 <= nx < 4 and 0 <= ny < 4 and not visited[nx][ny]:
+                    q.append((nx, ny, cnt + 1))
 
-                q.append(((c_nx, c_ny), cnt + 1))
-                if 0 <= nx < 4 and 0 <= ny < 4:
-                    if not visited[nx][ny]:
-                        q.append(((nx, ny), cnt + 1))
+    all_card = set()
+    for cards in list(map(set, board)):
+        all_card |= cards
+    all_card.discard(0)
+    check = [0] * 7
+    for i in range(4):
+        for j in range(4):
+            if board[i][j]:
+                if not check[board[i][j]]:
+                    check[board[i][j]] = 1
+                else:
+                    board[i][j] *= -1
 
-    def dfs(order_idx, R, C, cnt, board):
+    def culculate(r, c, idx, order, cnt, board):
         nonlocal answer
-        if order_idx == len(order):
-            answer = min(cnt, answer)
-            return
         if cnt > answer:
             return
-        color = order[order_idx]
-        for i in [0, 1]:
-            first_card_pos = card_pos[color][i]
-            n_R, n_C, s_cnt, _ = bfs((R, C), first_card_pos, color, board, True)
-            n_R, n_C, CNT, n_board = bfs(
-                (n_R, n_C), first_card_pos, color, deepcopy(board)
-            )
-            dfs(order_idx + 1, n_R, n_C, CNT + cnt + s_cnt, deepcopy(n_board))
+        if idx == len(order):
+            answer = min(answer, cnt)
+            return
+        for card1, card2 in [(1, -1), (-1, 1)]:
+            card1, card2 = card1 * order[idx], card2 * order[idx]
+            r1, c1, tmp1, board = find_card(r, c, card1, board)
+            r2, c2, tmp2, board = find_card(r1, c1, card2, board)
+            culculate(r2, c2, idx + 1, order, tmp1 + tmp2 + cnt, board)
+            board[r1][c1] = card1
+            board[r2][c2] = card2
 
-    for order in permutations(list(card_pos.keys()), len(card_pos)):
-        R, C = r, c
-        dfs(0, R, C, 0, deepcopy(board))
+    for order in list(permutations(all_card, len(all_card))):
+        x, y = r, c
+        culculate(x, y, 0, order, 0, board)
 
     return answer
-
-
-solution([[3, 0, 0, 2], [0, 0, 1, 0], [0, 1, 0, 0], [2, 0, 0, 3]], 0, 1)
-solution([[1, 0, 0, 3], [2, 0, 0, 0], [0, 0, 0, 2], [3, 0, 1, 0]], 1, 0)
