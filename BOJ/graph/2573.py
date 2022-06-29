@@ -7,7 +7,7 @@
 """
 import time
 import sys
-from collections import defaultdict, deque
+from collections import deque
 
 
 input = sys.stdin.readline
@@ -25,7 +25,6 @@ def main():
                 if tile[i][j] > 0:
                     start = (i, j)
                     break
-    # s_time = time.time()
     CNT = 0
 
     def num_iceberg(tile):
@@ -69,7 +68,6 @@ def main():
         if num_ice == 0:
             return 0
 
-    # print(time.time() - s_time)
     return CNT
 
 

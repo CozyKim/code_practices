@@ -10,7 +10,6 @@ TC = int(input())
 
 
 def solution():
-    graph = defaultdict(list)
     edges = []
     N, M, W = map(int, input().split())
     for __ in range(M):

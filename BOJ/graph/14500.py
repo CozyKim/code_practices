@@ -17,19 +17,21 @@ visited = [[0] * M for _ in range(N)]
 max_node_value = max(map(max, table))
 
 
+# 정사각형을 4개 이어 붙였다는 점에서 이동경로랑 같다고 볼 수 있다 → DFS/BFS로 볼 수 있다
 def dfs(node, sum_num, cnt, visited_nodes):
     global answer, visited
     if cnt == 4:
         answer = max(answer, sum_num)
         return
 
+    # pruning을 진행
     if sum_num + max_node_value * (4 - cnt) < answer:
         return
 
+    # DFS 기준 노드를 현재 이동 경로 모두에 대해서 진행
     for xx, yy in visited_nodes:
         x = xx
         y = yy
-
         for dx, dy in [(0, 1), (0, -1), (1, 0), (-1, 0)]:
             if 0 <= x + dx < N and 0 <= y + dy < M:
                 if not visited[x + dx][y + dy]:
